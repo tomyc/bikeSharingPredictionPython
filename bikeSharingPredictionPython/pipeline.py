@@ -7,8 +7,8 @@ import pandas as pd
 import time
 from sklearn.base import BaseEstimator, TransformerMixin,  ClassifierMixin
 from sklearn.preprocessing import StandardScaler
-from revoscalepy.functions.RxLogit import rx_logit_ex
-from revoscalepy.functions.RxPredict import rx_predict_ex
+from revoscalepy.functions.RxLogit import rx_logit #9.2.0: rx_logit_ex -> rx_logit
+from revoscalepy.functions.RxPredict import rx_predict #9.2.0 rx_predict_ex -> rx_predict
 
 #=========================
 #  Features engineering
@@ -177,7 +177,9 @@ class RxClassifier(BaseEstimator, ClassifierMixin):
                      + fft_max_coeff + fft_energy +  var +  cumrelfreq + mad + idxmax + idxmin"
 
         start = time.time()
-        self.__clf = rx_logit_ex(formula, data = X, compute_context = self.__computecontext,  report_progress = 3, verbose = 1)
+        #9.2.0 rx_logit_ex->rx_logit
+        #self.__clf = rx_logit_ex(formula, data = X, compute_context = self.__computecontext,  report_progress = 3, verbose = 1)
+        self.__clf = rx_logit(formula, data = X, compute_context = self.__computecontext,  report_progress = 3, verbose = 1)
         end = time.time()
 
         print("Training time duration: %.2f seconds" % (end - start))     
@@ -195,8 +197,10 @@ class RxClassifier(BaseEstimator, ClassifierMixin):
          """
         if self.__clf is None:
             raise RuntimeError("Data must be fitted before calling predict!")
-            
-        predict = rx_predict_ex(self.__clf, data = X,  compute_context = self.__computecontext) 
+        
+        #9.2.0 rx_predict_ex -> rx_predict
+        #predict = rx_predict_ex(self.__clf, data = X,  compute_context = self.__computecontext)
+        predict = rx_predict(self.__clf, data = X,  compute_context = self.__computecontext) 
         predictions = np.where(predict._results['label_Pred'] == 1, 1, 0)
 
         return predictions
